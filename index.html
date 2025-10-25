@@ -754,16 +754,343 @@ curl http://localhost:3000/api/devices</code></pre>
                             <i class="fas fa-copy"></i> Copy
                         </button>
                     </div>
-                    <pre><code>// WiFi credentials
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_PASSWORD";
+                    <pre><code>#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+// WiFi credentials
+const char* ssid = "<YOUR_WIFI_SSID>";
+const char* password = "<YOUR_PASSWORD>";
 
 // Backend server configuration
-const char* serverUrl = "http://192.168.1.9:3000/api/temperature"; // YOUR_IP
+const char* serverUrl = "http://192.168.1.9:3000/api/temperature"; //YOUR IP
 
 // Device configuration
 const char* deviceId = "ESP32-TEMP-001";
-const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d";</code></pre>
+const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d"; // Get from blockchain account
+
+// Temperature simulation settings
+float baseTemperature = 25.0;      // Base temperature in Celsius
+float currentTemperature = 25.0;
+bool simulateAlert = false;        // Set true to test alerts
+int readingCounter = 0;
+
+// Timing configuration
+unsigned long lastSendTime = 0;
+const unsigned long sendInterval = 15000; // Send every 15 seconds (faster for demo)
+
+// LED indicator
+#define LED_BUILTIN 2
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  // Seed random number generator
+  randomSeed(analogRead(0));
+  
+  Serial.println("\n\n=================================");
+  Serial.println("ESP32 Temperature Sender (SIMULATED)");
+  Serial.println("=================================\n");
+  
+  Serial.println("⚠️  SIMULATION MODE - No sensor required");
+  Serial.println("Generating realistic temperature data...\n");
+  
+  // Connect to WiFi
+  connectToWiFi();
+  
+  Serial.println("\nDevice Configuration:");
+  Serial.print("Device ID: ");
+  Serial.println(deviceId);
+  Serial.print("Server URL: ");
+  Serial.println(serverUrl);
+  Serial.print("Base Temperature: ");
+  Serial.print(baseTemperature);
+  Serial.println(" °C");
+  Serial.println("\nStarting temperature monitoring...\n");
+  
+  // Initial blink
+  for(int i = 0; i < 3; i++) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+  }
+}
+
+void loop() {
+  // Check WiFi connection
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi disconnected! Reconnecting...");
+    connectToWiFi();
+  }
+  
+  // Check for serial commands
+  checkSerialCommands();
+  
+  // Send temperature at regular intervals
+  if (millis() - lastSendTime >= sendInterval) {
+    readAndSendTemperature();
+    lastSendTime = millis();
+  }
+  
+  // Heartbeat blink (fast pulse every 2 seconds)
+  static unsigned long lastBlink = 0;
+  if (millis() - lastBlink > 2000) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(50);
+    digitalWrite(LED_BUILTIN, LOW);
+    lastBlink = millis();
+  }
+  
+  delay(100);
+}
+
+void connectToWiFi() {
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(ssid);
+  
+  WiFi.begin(ssid, password);
+  
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+    delay(500);
+    Serial.print(".");
+    attempts++;
+  }
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\n✓ WiFi Connected!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Signal Strength: ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm");
+  } else {
+    Serial.println("\n✗ WiFi Connection Failed!");
+  }
+}
+
+void readAndSendTemperature() {
+  Serial.println("\n--- Simulating Temperature Reading ---");
+  
+  // Simulate realistic temperature with variations
+  currentTemperature = simulateTemperature();
+  
+  Serial.print("📊 Reading #");
+  Serial.println(++readingCounter);
+  Serial.print("🌡️  Temperature: ");
+  Serial.print(currentTemperature, 2);
+  Serial.println(" °C");
+  
+  // Show status
+  if (currentTemperature > 35.0) {
+    Serial.println("⚠️  HIGH TEMPERATURE ALERT!");
+  } else if (currentTemperature < 10.0) {
+    Serial.println("⚠️  LOW TEMPERATURE ALERT!");
+  } else {
+    Serial.println("✓ Temperature Normal");
+  }
+  
+  // Send to blockchain via backend
+  sendToBlockchain(currentTemperature);
+}
+
+void sendToBlockchain(float temperature) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    
+    Serial.println("\n→ Sending to blockchain...");
+    
+    // Create JSON payload
+    StaticJsonDocument<256> doc;
+    doc["deviceId"] = deviceId;
+    doc["temperature"] = temperature;
+    doc["privateKey"] = devicePrivateKey;
+    
+    String jsonPayload;
+    serializeJson(doc, jsonPayload);
+    
+    // Send HTTP POST request
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+    
+    int httpResponseCode = http.POST(jsonPayload);
+    
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.print("✓ HTTP Response code: ");
+      Serial.println(httpResponseCode);
+      Serial.println("Response:");
+      Serial.println(response);
+      
+      // Parse response
+      StaticJsonDocument<512> responseDoc;
+      DeserializationError error = deserializeJson(responseDoc, response);
+      
+      if (!error) {
+        if (responseDoc["success"] == true) {
+          Serial.println("✓ Temperature recorded on blockchain!");
+          Serial.print("Transaction Hash: ");
+          Serial.println(responseDoc["transactionHash"].as<String>());
+          Serial.print("Block Number: ");
+          Serial.println(responseDoc["blockNumber"].as<String>());
+          
+          // Blink LED rapidly to indicate success
+          for (int i = 0; i < 5; i++) {
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(100);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(100);
+          }
+        } else {
+          Serial.println("✗ Blockchain transaction failed!");
+        }
+      }
+    } else {
+      Serial.print("✗ HTTP Error code: ");
+      Serial.println(httpResponseCode);
+      Serial.println(http.errorToString(httpResponseCode).c_str());
+    }
+    
+    http.end();
+  } else {
+    Serial.println("✗ WiFi not connected!");
+  }
+}
+
+// Simulate realistic temperature with variations
+float simulateTemperature() {
+  static float temp = baseTemperature;
+  static unsigned long lastChangeTime = 0;
+  static int alertCycle = 0;
+  
+  unsigned long currentTime = millis();
+  
+  // Every 10 readings, trigger an alert for testing
+  if (readingCounter > 0 && readingCounter % 10 == 0 && simulateAlert) {
+    alertCycle++;
+    if (alertCycle % 2 == 0) {
+      // High temperature alert
+      temp = 36.0 + random(0, 30) / 10.0; // 36.0 to 39.0°C
+      Serial.println("🔥 Simulating HIGH temperature spike!");
+    } else {
+      // Low temperature alert
+      temp = 8.0 + random(0, 20) / 10.0; // 8.0 to 10.0°C
+      Serial.println("❄️  Simulating LOW temperature drop!");
+    }
+    lastChangeTime = currentTime;
+    return temp;
+  }
+  
+  // Normal operation: gradual temperature changes
+  if (currentTime - lastChangeTime > 5000) { // Change every 5 seconds
+    // Random walk: small changes
+    float change = (random(-50, 51)) / 100.0; // -0.5 to +0.5°C
+    temp += change;
+    
+    // Keep within realistic bounds (15-32°C for normal operation)
+    if (temp < 18.0) temp = 18.0 + random(0, 20) / 10.0;
+    if (temp > 30.0) temp = 30.0 - random(0, 20) / 10.0;
+    
+    lastChangeTime = currentTime;
+  }
+  
+  // Add small random noise
+  float noise = (random(-10, 11)) / 100.0; // ±0.1°C
+  return temp + noise;
+}
+
+// Simulate different temperature patterns
+void setSimulationMode(int mode) {
+  switch(mode) {
+    case 1: // Normal room temperature
+      baseTemperature = 22.0;
+      simulateAlert = false;
+      Serial.println("Mode: Normal Room (22°C)");
+      break;
+    
+    case 2: // Server room
+      baseTemperature = 25.0;
+      simulateAlert = false;
+      Serial.println("Mode: Server Room (25°C)");
+      break;
+    
+    case 3: // Hot environment
+      baseTemperature = 32.0;
+      simulateAlert = true;
+      Serial.println("Mode: Hot Environment (32°C + alerts)");
+      break;
+    
+    case 4: // Cold environment
+      baseTemperature = 15.0;
+      simulateAlert = true;
+      Serial.println("Mode: Cold Environment (15°C + alerts)");
+      break;
+    
+    default:
+      baseTemperature = 25.0;
+      simulateAlert = false;
+  }
+  currentTemperature = baseTemperature;
+}
+
+// Check for serial commands to change simulation
+void checkSerialCommands() {
+  if (Serial.available() > 0) {
+    char cmd = Serial.read();
+    
+    switch(cmd) {
+      case '1':
+        setSimulationMode(1);
+        break;
+      case '2':
+        setSimulationMode(2);
+        break;
+      case '3':
+        setSimulationMode(3);
+        break;
+      case '4':
+        setSimulationMode(4);
+        break;
+      case 'h':
+      case 'H':
+        // Force high temperature
+        currentTemperature = 38.0;
+        Serial.println("🔥 FORCED HIGH TEMP: 38°C");
+        break;
+      case 'l':
+      case 'L':
+        // Force low temperature
+        currentTemperature = 5.0;
+        Serial.println("❄️  FORCED LOW TEMP: 5°C");
+        break;
+      case 'n':
+      case 'N':
+        // Reset to normal
+        currentTemperature = baseTemperature;
+        Serial.println("✓ Reset to normal");
+        break;
+      case '?':
+        printHelp();
+        break;
+    }
+  }
+}
+
+void printHelp() {
+  Serial.println("\n=== SIMULATION COMMANDS ===");
+  Serial.println("1 - Normal Room (22°C)");
+  Serial.println("2 - Server Room (25°C)");
+  Serial.println("3 - Hot Environment (32°C)");
+  Serial.println("4 - Cold Environment (15°C)");
+  Serial.println("H - Force HIGH temp alert (38°C)");
+  Serial.println("L - Force LOW temp alert (5°C)");
+  Serial.println("N - Reset to Normal");
+  Serial.println("? - Show this help");
+  Serial.println("===========================\n");
+}
+</code></pre>
                 </div>
 
                 <h3>ESP32 Device 2 (Receiver) - Key Configuration</h3>
@@ -774,17 +1101,322 @@ const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c
                             <i class="fas fa-copy"></i> Copy
                         </button>
                     </div>
-                    <pre><code>// WiFi credentials
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_PASSWORD";
+                    <pre><code>/*
+ * ESP32 Temperature Receiver (Device 2 - Receiver/Display) - SIMULATION MODE
+ * Retrieves temperature data from blockchain via backend API
+ * Displays on Serial Monitor (no OLED needed!)
+ * 
+ * Hardware Required:
+ * - ESP32 Development Board only (no display needed!)
+ * 
+ * Features:
+ * - Fetches data from blockchain
+ * - Displays on Serial Monitor
+ * - Built-in LED for status/alerts
+ * - Buzzer optional (can be disabled)
+ * 
+ * Libraries Required:
+ * - WiFi (built-in)
+ * - HTTPClient (built-in)
+ * - ArduinoJson (install via Library Manager)
+ */
+
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+// WiFi credentials
+const char* ssid = "<WIFI SSID>";
+const char* password = "<YOUR_PASSWORD>";
 
 // Backend server configuration
-const char* serverUrl = "http://192.168.1.9:3000/api/temperature/"; // YOUR_IP
-const char* senderDeviceAddress = "0x5c303cef53e62c9ea820bacfc67066362c1daed7";
+const char* serverUrl = "http://192.168.1.9:3000/api/temperature/"; //YOUR_IP
+const char* senderDeviceAddress = "0x5c303cef53e62c9ea820bacfc67066362c1daed7"; // Address of Device 1
 
 // Device configuration
 const char* deviceId = "ESP32-TEMP-002";
-const char* devicePrivateKey = "0x1ada126eca1b7650a33834e7da8135e27df076b726c1339bef5a6743655683be";</code></pre>
+const char* devicePrivateKey = "0x1ada126eca1b7650a33834e7da8135e27df076b726c1339bef5a6743655683be";
+
+// Pin definitions
+#define LED_BUILTIN 2
+#define BUZZER_PIN 25  // Optional: comment out if no buzzer
+#define USE_BUZZER false  // Set to true if you have a buzzer connected
+
+// Temperature thresholds
+const float HIGH_TEMP_THRESHOLD = 35.0; // °C
+const float LOW_TEMP_THRESHOLD = 10.0;  // °C
+
+// Timing configuration
+unsigned long lastFetchTime = 0;
+const unsigned long fetchInterval = 10000; // Fetch every 10 seconds
+
+// Temperature data
+float currentTemperature = 0.0;
+String lastUpdate = "";
+String deviceIdReceived = "";
+String location = "";
+bool dataAvailable = false;
+int fetchCounter = 0;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  if (USE_BUZZER) {
+    pinMode(BUZZER_PIN, OUTPUT);
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+  
+  Serial.println("\n\n====================================");
+  Serial.println("ESP32 Temperature Receiver (Display)");
+  Serial.println("====================================\n");
+  
+  Serial.println("⚠️  SERIAL MONITOR MODE - No display hardware required");
+  Serial.println("Temperature data will be shown here\n");
+  
+  // Connect to WiFi
+  connectToWiFi();
+  
+  Serial.println("\n✓ Initialization complete!");
+  Serial.println("\nDevice Configuration:");
+  Serial.print("Device ID: ");
+  Serial.println(deviceId);
+  Serial.print("Monitoring Device: ");
+  Serial.println(senderDeviceAddress);
+  Serial.println("\nStarting data retrieval...");
+  Serial.println("=====================================\n");
+  
+  // Initial LED pattern
+  for(int i = 0; i < 3; i++) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+  }
+  
+  delay(2000);
+}
+
+void loop() {
+  // Check WiFi connection
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi disconnected! Reconnecting...");
+    connectToWiFi();
+  }
+  
+  // Fetch temperature at regular intervals
+  if (millis() - lastFetchTime >= fetchInterval) {
+    fetchTemperatureFromBlockchain();
+    lastFetchTime = millis();
+  }
+  
+  // Heartbeat blink
+  static unsigned long lastBlink = 0;
+  if (millis() - lastBlink > 2000) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(50);
+    digitalWrite(LED_BUILTIN, LOW);
+    lastBlink = millis();
+  }
+  
+  delay(100);
+}
+
+void connectToWiFi() {
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(ssid);
+  
+  WiFi.begin(ssid, password);
+  
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+    delay(500);
+    Serial.print(".");
+    attempts++;
+  }
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\n✓ WiFi Connected!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Signal Strength: ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm");
+  } else {
+    Serial.println("\n✗ WiFi Connection Failed!");
+  }
+}
+
+void fetchTemperatureFromBlockchain() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    
+    Serial.println("\n╔══════════════════════════════════════╗");
+    Serial.print("║ Fetch #");
+    Serial.print(++fetchCounter);
+    Serial.println(" - Querying Blockchain");
+    Serial.println("╚══════════════════════════════════════╝");
+    
+    // Build URL
+    String url = String(serverUrl) + String(senderDeviceAddress);
+    
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+    
+    int httpResponseCode = http.GET();
+    
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      
+      // Parse JSON response
+      StaticJsonDocument<512> doc;
+      DeserializationError error = deserializeJson(doc, response);
+      
+      if (!error) {
+        if (doc["success"] == true) {
+          currentTemperature = doc["data"]["temperature"];
+          lastUpdate = doc["data"]["timestamp"].as<String>();
+          deviceIdReceived = doc["data"]["deviceId"].as<String>();
+          location = doc["data"]["location"].as<String>();
+          
+          dataAvailable = true;
+          
+          // Display in a nice format
+          displayTemperatureData();
+          
+          // Check for alerts
+          checkTemperatureAlerts(currentTemperature);
+          
+        } else {
+          Serial.println("✗ No data available");
+          dataAvailable = false;
+        }
+      } else {
+        Serial.print("✗ JSON parsing failed: ");
+        Serial.println(error.c_str());
+      }
+    } else {
+      Serial.print("✗ HTTP Error code: ");
+      Serial.println(httpResponseCode);
+      dataAvailable = false;
+    }
+    
+    http.end();
+  } else {
+    Serial.println("✗ WiFi not connected!");
+  }
+}
+
+void displayTemperatureData() {
+  Serial.println("\n┌─────────────────────────────────────┐");
+  Serial.println("│     TEMPERATURE DATA RECEIVED       │");
+  Serial.println("├─────────────────────────────────────┤");
+  
+  Serial.print("│ Device ID  : ");
+  Serial.println(deviceIdReceived);
+  
+  Serial.print("│ Location   : ");
+  Serial.println(location);
+  
+  Serial.print("│ Temperature: ");
+  Serial.print(currentTemperature, 2);
+  Serial.println(" °C");
+  
+  // Visual temperature bar
+  Serial.print("│ ");
+  int bars = map((int)(currentTemperature * 10), 0, 500, 0, 30);
+  for (int i = 0; i < bars && i < 30; i++) {
+    Serial.print("█");
+  }
+  Serial.println();
+  
+  // Status indicator
+  Serial.print("│ Status     : ");
+  if (currentTemperature > HIGH_TEMP_THRESHOLD) {
+    Serial.println("🔥 HIGH TEMP ALERT!");
+  } else if (currentTemperature < LOW_TEMP_THRESHOLD) {
+    Serial.println("❄️  LOW TEMP ALERT!");
+  } else {
+    Serial.println("✓ Normal");
+  }
+  
+  Serial.print("│ Updated    : ");
+  if (lastUpdate.length() > 11) {
+    Serial.println(lastUpdate.substring(11, 19));
+  } else {
+    Serial.println(lastUpdate);
+  }
+  
+  Serial.print("│ WiFi Signal: ");
+  Serial.print(WiFi.RSSI());
+  Serial.println(" dBm");
+  
+  Serial.println("└─────────────────────────────────────┘\n");
+}
+
+void checkTemperatureAlerts(float temperature) {
+  if (temperature > HIGH_TEMP_THRESHOLD) {
+    Serial.println("⚠️  HIGH TEMPERATURE ALERT!");
+    triggerAlert("HIGH", 3);
+  } else if (temperature < LOW_TEMP_THRESHOLD) {
+    Serial.println("⚠️  LOW TEMPERATURE ALERT!");
+    triggerAlert("LOW", 2);
+  }
+}
+
+void triggerAlert(String alertType, int beeps) {
+  // Beep buzzer
+  for (int i = 0; i < beeps; i++) {
+    digitalWrite(BUZZER_PIN, HIGH);
+    delay(200);
+    digitalWrite(BUZZER_PIN, LOW);
+    delay(200);
+  }
+  
+  // Flash LED
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(100);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(100);
+  }
+}
+
+
+// Display historical data (if fetching history)
+void displayHistory() {
+  // Fetch last 5 readings
+  String historyUrl = "http://192.168.1.9:3000/api/readings/" + 
+                      String(senderDeviceAddress) + "?limit=5"; //YOUR_IP
+  
+  HTTPClient http;
+  http.begin(historyUrl);
+  
+  int httpResponseCode = http.GET();
+  
+  if (httpResponseCode > 0) {
+    String response = http.getString();
+    
+    DynamicJsonDocument doc(2048);
+    DeserializationError error = deserializeJson(doc, response);
+    
+    if (!error && doc["success"] == true) {
+      JsonArray data = doc["data"];
+      
+      Serial.println("\n=== Temperature History ===");
+      for (JsonObject reading : data) {
+        Serial.print("Time: ");
+        Serial.print(reading["timestamp"].as<String>());
+        Serial.print(" | Temp: ");
+        Serial.print(reading["temperature"].as<float>());
+        Serial.println(" °C");
+      }
+    }
+  }
+  
+  http.end();
+}
+</code></pre>
                 </div>
 
                 <h3>Upload to ESP32</h3>
