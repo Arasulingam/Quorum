@@ -682,6 +682,81 @@ geth --datadir data \
     --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
     --port 30301</code></pre>
                 </div>
+                <h4>Terminal 3 - Node 2 (RPC: 22002, P2P: 30302)</h4>
+<div class="code-block">
+    <div class="code-header">
+        <span>Bash - Node 2</span>
+        <button class="copy-btn" onclick="copyCode(this)">
+            <i class="fas fa-copy"></i> Copy
+        </button>
+    </div>
+<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-2
+
+export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
+export PRIVATE_CONFIG=ignore
+
+geth --datadir data \
+    --networkid 1337 --nodiscover --verbosity 5 \
+    --syncmode full \
+    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
+    --http --http.addr 127.0.0.1 --http.port 22002 --http.corsdomain "*" --http.vhosts "*" \
+    --ws --ws.addr 127.0.0.1 --ws.port 32002 --ws.origins "*" \
+    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
+    --port 30302</code></pre>
+</div>
+
+<h4>Terminal 4 - Node 3 (RPC: 22003, P2P: 30303)</h4>
+<div class="code-block">
+    <div class="code-header">
+        <span>Bash - Node 3</span>
+        <button class="copy-btn" onclick="copyCode(this)">
+            <i class="fas fa-copy"></i> Copy
+        </button>
+    </div>
+<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-3
+
+export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
+export PRIVATE_CONFIG=ignore
+
+geth --datadir data \
+    --networkid 1337 --nodiscover --verbosity 5 \
+    --syncmode full \
+    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
+    --http --http.addr 127.0.0.1 --http.port 22003 --http.corsdomain "*" --http.vhosts "*" \
+    --ws --ws.addr 127.0.0.1 --ws.port 32003 --ws.origins "*" \
+    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
+    --port 30303</code></pre>
+</div>
+
+<h4>Terminal 5 - Node 4 (RPC: 22004, P2P: 30304)</h4>
+<div class="code-block">
+    <div class="code-header">
+        <span>Bash - Node 4</span>
+        <button class="copy-btn" onclick="copyCode(this)">
+            <i class="fas fa-copy"></i> Copy
+        </button>
+    </div>
+<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-4
+
+export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
+export PRIVATE_CONFIG=ignore
+
+geth --datadir data \
+    --networkid 1337 --nodiscover --verbosity 5 \
+    --syncmode full \
+    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
+    --http --http.addr 127.0.0.1 --http.port 22004 --http.corsdomain "*" --http.vhosts "*" \
+    --ws --ws.addr 127.0.0.1 --ws.port 32004 --ws.origins "*" \
+    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
+    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
+    --port 30304</code></pre>
+</div>
+
 
                 <p><em>Repeat similar commands for Nodes 2, 3, and 4 with respective port numbers...</em></p>
 
