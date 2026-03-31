@@ -118,12 +118,6 @@
             margin: 25px 0 15px 0;
         }
 
-        .section h4 {
-            color: #4a5568;
-            font-size: 1.2em;
-            margin: 20px 0 10px 0;
-        }
-
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -183,10 +177,6 @@
             background: #5568d3;
         }
 
-        .copy-btn.copied {
-            background: #48bb78;
-        }
-
         pre {
             margin: 0;
             padding: 20px;
@@ -195,14 +185,6 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.9em;
             line-height: 1.5;
-        }
-
-        code {
-            background: #2d3748;
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: #e2e8f0;
-            font-family: 'Courier New', Courier, monospace;
         }
 
         /* Tables */
@@ -226,10 +208,6 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        tr:hover {
-            background: #f7fafc;
-        }
-
         /* Alert Boxes */
         .alert {
             padding: 15px 20px;
@@ -248,18 +226,6 @@
             background: #f0fff4;
             border-color: #48bb78;
             color: #22543d;
-        }
-
-        .alert-warning {
-            background: #fffaf0;
-            border-color: #ed8936;
-            color: #7c2d12;
-        }
-
-        .alert-danger {
-            background: #fff5f5;
-            border-color: #f56565;
-            color: #742a2a;
         }
 
         /* Architecture Diagram */
@@ -287,7 +253,7 @@
             min-width: 150px;
         }
 
-        .arch-box.esp32 {
+        .arch-box.unit {
             border-top: 4px solid #48bb78;
         }
 
@@ -304,52 +270,9 @@
             font-size: 2em;
         }
 
-        /* Back to Top */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #667eea;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-        }
-
-        .back-to-top:hover {
-            background: #5568d3;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
         }
     </style>
 </head>
@@ -363,414 +286,171 @@
                 <li><a href="#architecture" class="nav-link">Architecture</a></li>
                 <li><a href="#installation" class="nav-link">Installation Guide</a></li>
                 <li><a href="#running" class="nav-link">Running the System</a></li>
-                <li><a href="#esp32-config" class="nav-link">ERM Configuration</a></li>
+                <li><a href="#erm-config" class="nav-link">ERM Configuration</a></li>
                 <li><a href="#api" class="nav-link">API Reference</a></li>
-                <li><a href="#troubleshooting" class="nav-link">Troubleshooting</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
             <div class="header">
                 <h1><i class="fas fa-thermometer-half"></i> IoT Temperature Monitoring System</h1>
-                <p>Powered by QBFT Blockchain Technology (ERM Units)</p>
+                <p>Immutable Monitoring via QBFT Blockchain (ERM-1 & ERM-2 Units)</p>
             </div>
 
             <section id="overview" class="section">
                 <h2>System Overview</h2>
-                <p>This project implements a decentralized IoT temperature monitoring system using QBFT (Quorum Byzantine Fault Tolerant) blockchain technology. Two ERM microcontrollers (based on ESP32) communicate through a blockchain network to ensure immutable, tamper-proof data storage.</p>
+                <p>This project implements a decentralized monitoring system using QBFT (Quorum Byzantine Fault Tolerant) blockchain technology. Two independent hardware units communicate via a blockchain network to ensure tamper-proof environmental records.</p>
                 
                 <div class="feature-grid">
                     <div class="feature-card">
-                        <h4><i class="fas fa-shield-alt"></i> Decentralized Storage</h4>
-                        <p>QBFT consensus ensures data integrity across 5 validator nodes</p>
+                        <h4><i class="fas fa-shield-alt"></i> Decentralized</h4>
+                        <p>QBFT consensus ensures data integrity across 5 validator nodes.</p>
                     </div>
                     <div class="feature-card">
-                        <h4><i class="fas fa-lock"></i> Immutable Records</h4>
-                        <p>Temperature data stored permanently on blockchain</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4><i class="fas fa-bolt"></i> Real-time Communication</h4>
-                        <p>Instant data transmission between IoT devices</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4><i class="fas fa-bell"></i> Alert System</h4>
-                        <p>Automatic notifications for temperature thresholds</p>
+                        <h4><i class="fas fa-lock"></i> Immutable</h4>
+                        <p>Data stored permanently on the blockchain, protected from modification.</p>
                     </div>
                 </div>
 
                 <h3>Key Components</h3>
                 <ul style="margin-left: 20px;">
-                    <li><strong>ERM-1:</strong> Simulates and sends temperature data (Sender)</li>
-                    <li><strong>ERM-2:</strong> Receives and displays temperature data (Receiver)</li>
-                    <li><strong>Blockchain Network:</strong> 5-node QBFT network for consensus</li>
-                    <li><strong>Backend Server:</strong> Node.js API bridge between devices and blockchain</li>
+                    <li><strong>ERM-1:</strong> Hardware Sender Unit (Temperature Simulation & Upload)</li>
+                    <li><strong>ERM-2:</strong> Hardware Receiver Unit (Data Retrieval & Alert Display)</li>
+                    <li><strong>GoQuorum Network:</strong> 5-node private blockchain</li>
+                    <li><strong>Backend Bridge:</strong> Node.js API server</li>
                 </ul>
             </section>
 
             <section id="requirements" class="section">
                 <h2>System Requirements</h2>
-                
                 <div class="alert alert-info">
-                    <strong><i class="fas fa-info-circle"></i> Verified Environment:</strong> This system has been tested on Ubuntu 22.04.3 LTS with WSL2
+                    <strong>Environment:</strong> Tested on Ubuntu 22.04 LTS.
                 </div>
-
-                <h3>Minimum Hardware Requirements</h3>
                 <table>
                     <tr>
-                        <th>Component</th>
-                        <th>Requirement</th>
+                        <th>Hardware</th>
+                        <th>Software</th>
                     </tr>
                     <tr>
-                        <td>CPU</td>
-                        <td>2 cores or more</td>
+                        <td>2x ERM Monitoring Units</td>
+                        <td>Node.js v22.x & npm</td>
                     </tr>
                     <tr>
-                        <td>RAM</td>
-                        <td>4GB minimum, 8GB recommended</td>
-                    </tr>
-                    <tr>
-                        <td>Storage</td>
-                        <td>10GB free space</td>
-                    </tr>
-                    <tr>
-                        <td>ERM Boards</td>
-                        <td>2x ERM (ESP32) Development Boards</td>
+                        <td>8GB RAM (Minimum for 5 Nodes)</td>
+                        <td>GoQuorum v24.4.1</td>
                     </tr>
                 </table>
-
-                <h3>Software Prerequisites</h3>
-                
-                <h4>1. Node.js & npm</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Install Node.js v22.x
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Verify installation
-node --version  # Should output: v22.21.0 or later
-npm --version   # Should output: 10.9.4 or later</code></pre>
-                </div>
-
-                <h4>2. GoQuorum</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Download GoQuorum v24.4.1
-cd ~
-# File available on GitHub repository
-
-# Extract
-tar -xvf geth_v24.4.1_linux_amd64.tar.gz
-
-# Install globally
-sudo mv geth /usr/local/bin/
-sudo mv bootnode /usr/local/bin/
-
-# Verify installation
-geth version</code></pre>
-                </div>
-
-                <h4>3. Arduino IDE & ESP32 Support</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Install Arduino IDE
-sudo snap install arduino</code></pre>
-                </div>
-
-                <div class="alert alert-info">
-                    <strong>ESP32 Board Package:</strong> Add this URL to Arduino IDE Preferences → Additional Boards Manager URLs:<br>
-                    <code>https://dl.espressif.com/dl/package_esp32_index.json</code>
-                </div>
             </section>
 
             <section id="architecture" class="section">
                 <h2>Architecture</h2>
-                
                 <div class="architecture">
-                    <h3>System Data Flow</h3>
                     <div class="arch-row">
-                        <div class="arch-box esp32">
+                        <div class="arch-box unit">
                             <i class="fas fa-microchip" style="font-size: 2em; color: #48bb78;"></i>
                             <h4>ERM-1</h4>
-                            <p>Temperature Sender</p>
+                            <p>Sender</p>
                         </div>
                         <span class="arrow">→</span>
                         <div class="arch-box backend">
                             <i class="fas fa-server" style="font-size: 2em; color: #667eea;"></i>
                             <h4>Backend API</h4>
-                            <p>Node.js Server</p>
                         </div>
                         <span class="arrow">→</span>
                         <div class="arch-box blockchain">
                             <i class="fas fa-cubes" style="font-size: 2em; color: #ed8936;"></i>
-                            <h4>QBFT Network</h4>
-                            <p>5 Validator Nodes</p>
+                            <h4>QBFT Blockchain</h4>
                         </div>
                     </div>
                     <div class="arch-row">
-                        <span class="arrow" style="transform: rotate(180deg);">→</span>
+                        <span class="arrow" style="transform: rotate(90deg);">→</span>
                     </div>
                     <div class="arch-row">
-                        <div class="arch-box esp32">
-                            <i class="fas fa-mobile-alt" style="font-size: 2em; color: #48bb78;"></i>
+                        <div class="arch-box unit">
+                            <i class="fas fa-desktop" style="font-size: 2em; color: #48bb78;"></i>
                             <h4>ERM-2</h4>
-                            <p>Temperature Receiver</p>
+                            <p>Receiver</p>
                         </div>
                     </div>
                 </div>
-
-                <h3>Data Flow Process</h3>
-                <ol style="margin-left: 20px; line-height: 2;">
-                    <li><strong>Temperature Generation:</strong> ERM-1 simulates temperature (20-30°C)</li>
-                    <li><strong>HTTP POST:</strong> ERM-1 sends JSON payload to backend API</li>
-                    <li><strong>Blockchain Transaction:</strong> Backend creates signed transaction</li>
-                    <li><strong>QBFT Consensus:</strong> 5 validator nodes reach consensus</li>
-                    <li><strong>Block Creation:</strong> Transaction included in new block (5s intervals)</li>
-                    <li><strong>Data Retrieval:</strong> ERM-2 queries backend via HTTP GET</li>
-                    <li><strong>Display:</strong> Temperature displayed on ERM-2 with alerts</li>
-                </ol>
             </section>
 
             <section id="installation" class="section">
                 <h2>Installation Guide</h2>
-
-                <h3>Phase 1: Project Files Setup</h3>
+                <h4>1. Node.js Setup</h4>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>git clone https://github.com/Arasulingam/QBFT-Quorum.git
-cd QBFT-Network
-
-# Verify directory structure
-ls -la QBFT-Network/</code></pre>
+                    <pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs</code></pre>
                 </div>
 
-                <h3>Phase 2: Backend Dependencies</h3>
+                <h4>2. GoQuorum (Geth) Installation</h4>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Navigate to backend directory
-cd ~/QBFT-Network/server/iot-blockchain-backend
-
-# Install Node.js dependencies
-npm install
-
-# Verify installation
-npm list --depth=0</code></pre>
+                    <pre><code># Extract and move binaries
+sudo mv geth /usr/local/bin/
+sudo mv bootnode /usr/local/bin/
+geth version</code></pre>
                 </div>
-
-                <div class="alert alert-success">
-                    <strong><i class="fas fa-check-circle"></i> Expected Packages:</strong><br>
-                    body-parser@1.20.2, cors@2.8.5, dotenv@16.0.3, express@4.18.2, web3@1.10.0
-                </div>
-
-                <h3>Network Configuration</h3>
-                <table>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                    </tr>
-                    <tr>
-                        <td>Chain ID</td>
-                        <td>1337</td>
-                    </tr>
-                    <tr>
-                        <td>Consensus</td>
-                        <td>QBFT (Byzantine Fault Tolerant)</td>
-                    </tr>
-                    <tr>
-                        <td>Block Period</td>
-                        <td>5 seconds</td>
-                    </tr>
-                    <tr>
-                        <td>Validators</td>
-                        <td>5 nodes</td>
-                    </tr>
-                    <tr>
-                        <td>Gas Price</td>
-                        <td>0 (free transactions)</td>
-                    </tr>
-                </table>
             </section>
 
             <section id="running" class="section">
                 <h2>Running the System</h2>
-
-                <div class="alert alert-warning">
-                    <strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> You need 5 separate terminal windows to run all blockchain nodes.
+                <h3>Step 1: Start Blockchain Node 0</h3>
+                <div class="code-block">
+                    <pre><code>cd ~/QBFT-Network/Node-0
+geth --datadir data --networkid 1337 --istanbul.blockperiod 5 \
+--http --http.port 22000 --http.api admin,eth,debug,miner,istanbul \
+--unlock ${ADDRESS} --allow-insecure-unlock</code></pre>
                 </div>
 
-                <h3>Step 1: Start QBFT Blockchain Network</h3>
-
-                <h4>Terminal 1 - Node 0 (RPC: 22000)</h4>
+                <h3>Step 2: Start Backend Bridge</h3>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash - Node 0</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-0
-export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-export PRIVATE_CONFIG=ignore
-
-geth --datadir data \
-    --networkid 1337 --nodiscover --verbosity 5 \
-    --syncmode full \
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
-    --http --http.addr 127.0.0.1 --http.port 22000 --http.corsdomain "*" --http.vhosts "*" \
-    --ws --ws.addr 127.0.0.1 --ws.port 32000 --ws.origins "*" \
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
-    --port 30300</code></pre>
-                </div>
-
-                <p><em>Continue starting Nodes 1 through 4 in separate terminals using their respective ports (22001-22004)...</em></p>
-
-                <h3>Step 2: Start Backend Server</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash - Terminal 6</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>cd /home/arasu/QBFT-Network/server/iot-blockchain-backend
+                    <pre><code>cd ~/server/iot-blockchain-backend
 node server.js</code></pre>
                 </div>
-
                 <div class="alert alert-success">
-                    <strong>Expected Output:</strong><br>
-                    🚀 Server running on port 3000<br>
-                    📡 Connected to blockchain: http://127.0.0.1:22000
+                    <strong>Status:</strong> Server listening on port 3000.
                 </div>
             </section>
 
-            <section id="esp32-config" class="section">
+            <section id="erm-config" class="section">
                 <h2>ERM Configuration</h2>
-
-                <h3>ERM-1 (Sender Unit) - Key Configuration</h3>
+                <h3>ERM-1 (Sender) Configuration</h3>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>C++ (Arduino)</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>
-// Device configuration
-const char* deviceId = "ERM-1-SENDER";
-const char* serverUrl = "http://192.168.1.9:3000/api/temperature"; 
-const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d"; 
-
-// ... inside setup/loop ...
-Serial.println("ERM-1 Temperature Sender Active");
-</code></pre>
+                    <pre><code>const char* deviceId = "ERM-1";
+const char* serverUrl = "http://[YOUR_IP]:3000/api/temperature";
+const char* privateKey = "0x8712...059e05d";</code></pre>
                 </div>
 
-                <h3>ERM-2 (Receiver Unit) - Key Configuration</h3>
+                <h3>ERM-2 (Receiver) Configuration</h3>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>C++ (Arduino)</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>
-// Device configuration
-const char* deviceId = "ERM-2-RECEIVER";
-const char* senderDeviceAddress = "0x5c303cef53e62c9ea820bacfc67066362c1daed7"; 
-
-// ... inside setup/loop ...
-Serial.println("ERM-2 Temperature Receiver Active");
-</code></pre>
+                    <pre><code>const char* deviceId = "ERM-2";
+const char* monitorAddress = "0x5c303...1daed7";
+const float HIGH_TEMP_ALERT = 35.0;</code></pre>
                 </div>
-
-                <h3>Upload to ERM Units</h3>
-                <ol style="margin-left: 20px; line-height: 2;">
-                    <li>Connect ERM via USB</li>
-                    <li>Select: Tools → Board → ESP32 Dev Module</li>
-                    <li>Click: Upload (→ button)</li>
-                    <li>Open: Serial Monitor to verify "ERM-1" or "ERM-2" labels</li>
-                </ol>
             </section>
 
             <section id="api" class="section">
                 <h2>API Reference</h2>
-                <div class="alert alert-info">
-                    <strong>Base URL:</strong> <code>http://localhost:3000</code>
-                </div>
-                <h3>Sample Registration for ERM-1</h3>
                 <div class="code-block">
-                    <pre><code>POST /api/register-device
-{
-  "deviceAddress": "0x5c303cef53e62c9ea820bacfc67066362c1daed7",
-  "deviceId": "ERM-1",
-  "location": "Main-Lab"
-}</code></pre>
+                    <pre><code>GET /api/temperature/:deviceAddress  # Get latest ERM-1 data
+POST /api/temperature               # ERM-1 data submission
+GET /api/devices                    # List registered units</code></pre>
                 </div>
             </section>
 
-            <div style="text-align: center; padding: 40px 0; border-top: 2px solid #e2e8f0; margin-top: 50px;">
-                <p style="color: #718096; font-size: 0.9em;">
-                    <i class="fas fa-code"></i> IoT Monitoring System (ERM-1 & ERM-2 Units)<br>
-                    Built with ❤️ using Node.js and GoQuorum
-                </p>
+            <div style="text-align: center; padding: 40px 0; border-top: 1px solid #eee;">
+                <p style="color: #999; font-size: 0.8em;">IoT Monitoring System • ERM-1 & ERM-2 • QBFT Blockchain</p>
             </div>
         </main>
     </div>
 
     <script>
-        // Copy code functionality
-        function copyCode(button) {
-            const codeBlock = button.closest('.code-block');
-            const code = codeBlock.querySelector('pre code').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                button.classList.add('copied');
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.classList.remove('copied');
-                }, 2000);
-            });
-        }
-
-        // Smooth scrolling for navigation
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
-                const targetId = this.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                if (targetSection) {
-                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
             });
         });
     </script>
