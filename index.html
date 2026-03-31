@@ -355,7 +355,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <h2><i class="fas fa-cube"></i> Documentation</h2>
             <ul>
@@ -364,24 +363,21 @@
                 <li><a href="#architecture" class="nav-link">Architecture</a></li>
                 <li><a href="#installation" class="nav-link">Installation Guide</a></li>
                 <li><a href="#running" class="nav-link">Running the System</a></li>
-                <li><a href="#esp32-config" class="nav-link">ESP32 Configuration</a></li>
+                <li><a href="#esp32-config" class="nav-link">ERM Configuration</a></li>
                 <li><a href="#api" class="nav-link">API Reference</a></li>
                 <li><a href="#troubleshooting" class="nav-link">Troubleshooting</a></li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
             <div class="header">
                 <h1><i class="fas fa-thermometer-half"></i> IoT Temperature Monitoring System</h1>
-                <p>Powered by QBFT Blockchain Technology</p>
+                <p>Powered by QBFT Blockchain Technology (ERM Units)</p>
             </div>
 
-            <!-- System Overview -->
             <section id="overview" class="section">
                 <h2>System Overview</h2>
-                <p>This project implements a decentralized IoT temperature monitoring system using QBFT (Quorum Byzantine Fault Tolerant) blockchain technology. Two ESP32 microcontrollers communicate through a blockchain network to ensure immutable, tamper-proof data storage.</p>
+                <p>This project implements a decentralized IoT temperature monitoring system using QBFT (Quorum Byzantine Fault Tolerant) blockchain technology. Two ERM microcontrollers (based on ESP32) communicate through a blockchain network to ensure immutable, tamper-proof data storage.</p>
                 
                 <div class="feature-grid">
                     <div class="feature-card">
@@ -404,14 +400,13 @@
 
                 <h3>Key Components</h3>
                 <ul style="margin-left: 20px;">
-                    <li><strong>ESP32 Device 1:</strong> Simulates and sends temperature data</li>
-                    <li><strong>ESP32 Device 2:</strong> Receives and displays temperature data</li>
+                    <li><strong>ERM-1:</strong> Simulates and sends temperature data (Sender)</li>
+                    <li><strong>ERM-2:</strong> Receives and displays temperature data (Receiver)</li>
                     <li><strong>Blockchain Network:</strong> 5-node QBFT network for consensus</li>
                     <li><strong>Backend Server:</strong> Node.js API bridge between devices and blockchain</li>
                 </ul>
             </section>
 
-            <!-- System Requirements -->
             <section id="requirements" class="section">
                 <h2>System Requirements</h2>
                 
@@ -438,8 +433,8 @@
                         <td>10GB free space</td>
                     </tr>
                     <tr>
-                        <td>ESP32 Boards</td>
-                        <td>2x ESP32 Development Boards</td>
+                        <td>ERM Boards</td>
+                        <td>2x ERM (ESP32) Development Boards</td>
                     </tr>
                 </table>
 
@@ -472,7 +467,7 @@ npm --version   # Should output: 10.9.4 or later</code></pre>
                     </div>
                     <pre><code># Download GoQuorum v24.4.1
 cd ~
-# File given in github
+# File available on GitHub repository
 
 # Extract
 tar -xvf geth_v24.4.1_linux_amd64.tar.gz
@@ -503,7 +498,6 @@ sudo snap install arduino</code></pre>
                 </div>
             </section>
 
-            <!-- Architecture -->
             <section id="architecture" class="section">
                 <h2>Architecture</h2>
                 
@@ -512,7 +506,7 @@ sudo snap install arduino</code></pre>
                     <div class="arch-row">
                         <div class="arch-box esp32">
                             <i class="fas fa-microchip" style="font-size: 2em; color: #48bb78;"></i>
-                            <h4>ESP32-1</h4>
+                            <h4>ERM-1</h4>
                             <p>Temperature Sender</p>
                         </div>
                         <span class="arrow">→</span>
@@ -534,7 +528,7 @@ sudo snap install arduino</code></pre>
                     <div class="arch-row">
                         <div class="arch-box esp32">
                             <i class="fas fa-mobile-alt" style="font-size: 2em; color: #48bb78;"></i>
-                            <h4>ESP32-2</h4>
+                            <h4>ERM-2</h4>
                             <p>Temperature Receiver</p>
                         </div>
                     </div>
@@ -542,17 +536,16 @@ sudo snap install arduino</code></pre>
 
                 <h3>Data Flow Process</h3>
                 <ol style="margin-left: 20px; line-height: 2;">
-                    <li><strong>Temperature Generation:</strong> ESP32-1 simulates temperature (20-30°C)</li>
-                    <li><strong>HTTP POST:</strong> Device sends JSON payload to backend API</li>
+                    <li><strong>Temperature Generation:</strong> ERM-1 simulates temperature (20-30°C)</li>
+                    <li><strong>HTTP POST:</strong> ERM-1 sends JSON payload to backend API</li>
                     <li><strong>Blockchain Transaction:</strong> Backend creates signed transaction</li>
                     <li><strong>QBFT Consensus:</strong> 5 validator nodes reach consensus</li>
                     <li><strong>Block Creation:</strong> Transaction included in new block (5s intervals)</li>
-                    <li><strong>Data Retrieval:</strong> ESP32-2 queries backend via HTTP GET</li>
-                    <li><strong>Display:</strong> Temperature displayed with alerts</li>
+                    <li><strong>Data Retrieval:</strong> ERM-2 queries backend via HTTP GET</li>
+                    <li><strong>Display:</strong> Temperature displayed on ERM-2 with alerts</li>
                 </ol>
             </section>
 
-            <!-- Installation -->
             <section id="installation" class="section">
                 <h2>Installation Guide</h2>
 
@@ -623,17 +616,16 @@ npm list --depth=0</code></pre>
                 </table>
             </section>
 
-            <!-- Running the System -->
             <section id="running" class="section">
                 <h2>Running the System</h2>
 
                 <div class="alert alert-warning">
-                    <strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> You need 5 separate terminal windows to run all blockchain nodes. Consider using tmux or screen for easier management.
+                    <strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> You need 5 separate terminal windows to run all blockchain nodes.
                 </div>
 
                 <h3>Step 1: Start QBFT Blockchain Network</h3>
 
-                <h4>Terminal 1 - Node 0 (RPC: 22000, P2P: 30300)</h4>
+                <h4>Terminal 1 - Node 0 (RPC: 22000)</h4>
                 <div class="code-block">
                     <div class="code-header">
                         <span>Bash - Node 0</span>
@@ -642,7 +634,6 @@ npm list --depth=0</code></pre>
                         </button>
                     </div>
                     <pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-0
-
 export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
 export PRIVATE_CONFIG=ignore
 
@@ -658,116 +649,7 @@ geth --datadir data \
     --port 30300</code></pre>
                 </div>
 
-                <h4>Terminal 2 - Node 1 (RPC: 22001, P2P: 30301)</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash - Node 1</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-1
-
-export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-export PRIVATE_CONFIG=ignore
-
-geth --datadir data \
-    --networkid 1337 --nodiscover --verbosity 5 \
-    --syncmode full \
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
-    --http --http.addr 127.0.0.1 --http.port 22001 --http.corsdomain "*" --http.vhosts "*" \
-    --ws --ws.addr 127.0.0.1 --ws.port 32001 --ws.origins "*" \
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
-    --port 30301</code></pre>
-                </div>
-                <h4>Terminal 3 - Node 2 (RPC: 22002, P2P: 30302)</h4>
-<div class="code-block">
-    <div class="code-header">
-        <span>Bash - Node 2</span>
-        <button class="copy-btn" onclick="copyCode(this)">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    </div>
-<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-2
-
-export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-export PRIVATE_CONFIG=ignore
-
-geth --datadir data \
-    --networkid 1337 --nodiscover --verbosity 5 \
-    --syncmode full \
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
-    --http --http.addr 127.0.0.1 --http.port 22002 --http.corsdomain "*" --http.vhosts "*" \
-    --ws --ws.addr 127.0.0.1 --ws.port 32002 --ws.origins "*" \
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
-    --port 30302</code></pre>
-</div>
-
-<h4>Terminal 4 - Node 3 (RPC: 22003, P2P: 30303)</h4>
-<div class="code-block">
-    <div class="code-header">
-        <span>Bash - Node 3</span>
-        <button class="copy-btn" onclick="copyCode(this)">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    </div>
-<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-3
-
-export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-export PRIVATE_CONFIG=ignore
-
-geth --datadir data \
-    --networkid 1337 --nodiscover --verbosity 5 \
-    --syncmode full \
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
-    --http --http.addr 127.0.0.1 --http.port 22003 --http.corsdomain "*" --http.vhosts "*" \
-    --ws --ws.addr 127.0.0.1 --ws.port 32003 --ws.origins "*" \
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
-    --port 30303</code></pre>
-</div>
-
-<h4>Terminal 5 - Node 4 (RPC: 22004, P2P: 30304)</h4>
-<div class="code-block">
-    <div class="code-header">
-        <span>Bash - Node 4</span>
-        <button class="copy-btn" onclick="copyCode(this)">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    </div>
-<pre><code>cd /home/arasu/QBFT-Network/QBFT-Network/Node-4
-
-export ADDRESS=$(grep -o '"address": *"[^"]*"' ./data/keystore/accountKeystore | grep -o '"[^"]*"$' | sed 's/"//g')
-export PRIVATE_CONFIG=ignore
-
-geth --datadir data \
-    --networkid 1337 --nodiscover --verbosity 5 \
-    --syncmode full \
-    --istanbul.blockperiod 5 --mine --miner.threads 1 --miner.gasprice 0 --emitcheckpoints \
-    --http --http.addr 127.0.0.1 --http.port 22004 --http.corsdomain "*" --http.vhosts "*" \
-    --ws --ws.addr 127.0.0.1 --ws.port 32004 --ws.origins "*" \
-    --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul \
-    --unlock ${ADDRESS} --allow-insecure-unlock --password ./data/keystore/accountPassword \
-    --port 30304</code></pre>
-</div>
-
-
-                <p><em>Repeat similar commands for Nodes 2, 3, and 4 with respective port numbers...</em></p>
-
-                <div class="alert alert-success">
-                    <strong><i class="fas fa-check-circle"></i> Network Status Indicators:</strong>
-                    <ul style="margin-top: 10px;">
-                        <li>INFO Started P2P networking - Node started successfully</li>
-                        <li>INFO Looking for peers peercount=4 - Connected to other nodes</li>
-                        <li>INFO IPC endpoint opened - RPC interface ready</li>
-                    </ul>
-                </div>
+                <p><em>Continue starting Nodes 1 through 4 in separate terminals using their respective ports (22001-22004)...</em></p>
 
                 <h3>Step 2: Start Backend Server</h3>
                 <div class="code-block">
@@ -778,50 +660,20 @@ geth --datadir data \
                         </button>
                     </div>
                     <pre><code>cd /home/arasu/QBFT-Network/server/iot-blockchain-backend
-
 node server.js</code></pre>
                 </div>
 
                 <div class="alert alert-success">
                     <strong>Expected Output:</strong><br>
                     🚀 Server running on port 3000<br>
-                    📡 Connected to blockchain: http://127.0.0.1:22000<br>
-                    📝 Contract address: 0xb5963eaf88065e44cd8f94ebd71b8bd7099c3ec3
-                </div>
-
-                <h3>Step 3: Verify System Status</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash - Test Commands</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Health check
-curl http://localhost:3000/health
-
-# Check registered devices
-curl http://localhost:3000/api/devices</code></pre>
+                    📡 Connected to blockchain: http://127.0.0.1:22000
                 </div>
             </section>
 
-            <!-- ESP32 Configuration -->
             <section id="esp32-config" class="section">
-                <h2>ESP32 Configuration</h2>
+                <h2>ERM Configuration</h2>
 
-                <h3>Find Your Server IP Address</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>hostname -I
-# Example output: 192.168.1.150</code></pre>
-                </div>
-
-                <h3>ESP32 Device 1 (Sender) - Key Configuration</h3>
+                <h3>ERM-1 (Sender Unit) - Key Configuration</h3>
                 <div class="code-block">
                     <div class="code-header">
                         <span>C++ (Arduino)</span>
@@ -830,346 +682,17 @@ curl http://localhost:3000/api/devices</code></pre>
                         </button>
                     </div>
                     <pre><code>
-#include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-
-// WiFi credentials
-const char* ssid = "<YOUR_WIFI_SSID>";
-const char* password = "<YOUR_PASSWORD>";
-
-// Backend server configuration
-const char* serverUrl = "http://192.168.1.9:3000/api/temperature"; //YOUR IP
-
 // Device configuration
-const char* deviceId = "ESP32-TEMP-001";
-const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d"; // Get from blockchain account
+const char* deviceId = "ERM-1-SENDER";
+const char* serverUrl = "http://192.168.1.9:3000/api/temperature"; 
+const char* devicePrivateKey = "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d"; 
 
-// Temperature simulation settings
-float baseTemperature = 25.0;      // Base temperature in Celsius
-float currentTemperature = 25.0;
-bool simulateAlert = false;        // Set true to test alerts
-int readingCounter = 0;
-
-// Timing configuration
-unsigned long lastSendTime = 0;
-const unsigned long sendInterval = 15000; // Send every 15 seconds (faster for demo)
-
-// LED indicator
-#define LED_BUILTIN 2
-
-void setup() {
-  Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT);
-  
-  // Seed random number generator
-  randomSeed(analogRead(0));
-  
-  Serial.println("\n\n=================================");
-  Serial.println("ESP32 Temperature Sender (SIMULATED)");
-  Serial.println("=================================\n");
-  
-  Serial.println("⚠️  SIMULATION MODE - No sensor required");
-  Serial.println("Generating realistic temperature data...\n");
-  
-  // Connect to WiFi
-  connectToWiFi();
-  
-  Serial.println("\nDevice Configuration:");
-  Serial.print("Device ID: ");
-  Serial.println(deviceId);
-  Serial.print("Server URL: ");
-  Serial.println(serverUrl);
-  Serial.print("Base Temperature: ");
-  Serial.print(baseTemperature);
-  Serial.println(" °C");
-  Serial.println("\nStarting temperature monitoring...\n");
-  
-  // Initial blink
-  for(int i = 0; i < 3; i++) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(200);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(200);
-  }
-}
-
-void loop() {
-  // Check WiFi connection
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi disconnected! Reconnecting...");
-    connectToWiFi();
-  }
-  
-  // Check for serial commands
-  checkSerialCommands();
-  
-  // Send temperature at regular intervals
-  if (millis() - lastSendTime >= sendInterval) {
-    readAndSendTemperature();
-    lastSendTime = millis();
-  }
-  
-  // Heartbeat blink (fast pulse every 2 seconds)
-  static unsigned long lastBlink = 0;
-  if (millis() - lastBlink > 2000) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(50);
-    digitalWrite(LED_BUILTIN, LOW);
-    lastBlink = millis();
-  }
-  
-  delay(100);
-}
-
-void connectToWiFi() {
-  Serial.print("Connecting to WiFi: ");
-  Serial.println(ssid);
-  
-  WiFi.begin(ssid, password);
-  
-  int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-    delay(500);
-    Serial.print(".");
-    attempts++;
-  }
-  
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n✓ WiFi Connected!");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-    Serial.print("Signal Strength: ");
-    Serial.print(WiFi.RSSI());
-    Serial.println(" dBm");
-  } else {
-    Serial.println("\n✗ WiFi Connection Failed!");
-  }
-}
-
-void readAndSendTemperature() {
-  Serial.println("\n--- Simulating Temperature Reading ---");
-  
-  // Simulate realistic temperature with variations
-  currentTemperature = simulateTemperature();
-  
-  Serial.print("📊 Reading #");
-  Serial.println(++readingCounter);
-  Serial.print("🌡️  Temperature: ");
-  Serial.print(currentTemperature, 2);
-  Serial.println(" °C");
-  
-  // Show status
-  if (currentTemperature > 35.0) {
-    Serial.println("⚠️  HIGH TEMPERATURE ALERT!");
-  } else if (currentTemperature < 10.0) {
-    Serial.println("⚠️  LOW TEMPERATURE ALERT!");
-  } else {
-    Serial.println("✓ Temperature Normal");
-  }
-  
-  // Send to blockchain via backend
-  sendToBlockchain(currentTemperature);
-}
-
-void sendToBlockchain(float temperature) {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    
-    Serial.println("\n→ Sending to blockchain...");
-    
-    // Create JSON payload
-    StaticJsonDocument<256> doc;
-    doc["deviceId"] = deviceId;
-    doc["temperature"] = temperature;
-    doc["privateKey"] = devicePrivateKey;
-    
-    String jsonPayload;
-    serializeJson(doc, jsonPayload);
-    
-    // Send HTTP POST request
-    http.begin(serverUrl);
-    http.addHeader("Content-Type", "application/json");
-    
-    int httpResponseCode = http.POST(jsonPayload);
-    
-    if (httpResponseCode > 0) {
-      String response = http.getString();
-      Serial.print("✓ HTTP Response code: ");
-      Serial.println(httpResponseCode);
-      Serial.println("Response:");
-      Serial.println(response);
-      
-      // Parse response
-      StaticJsonDocument<512> responseDoc;
-      DeserializationError error = deserializeJson(responseDoc, response);
-      
-      if (!error) {
-        if (responseDoc["success"] == true) {
-          Serial.println("✓ Temperature recorded on blockchain!");
-          Serial.print("Transaction Hash: ");
-          Serial.println(responseDoc["transactionHash"].as<String>());
-          Serial.print("Block Number: ");
-          Serial.println(responseDoc["blockNumber"].as<String>());
-          
-          // Blink LED rapidly to indicate success
-          for (int i = 0; i < 5; i++) {
-            digitalWrite(LED_BUILTIN, HIGH);
-            delay(100);
-            digitalWrite(LED_BUILTIN, LOW);
-            delay(100);
-          }
-        } else {
-          Serial.println("✗ Blockchain transaction failed!");
-        }
-      }
-    } else {
-      Serial.print("✗ HTTP Error code: ");
-      Serial.println(httpResponseCode);
-      Serial.println(http.errorToString(httpResponseCode).c_str());
-    }
-    
-    http.end();
-  } else {
-    Serial.println("✗ WiFi not connected!");
-  }
-}
-
-// Simulate realistic temperature with variations
-float simulateTemperature() {
-  static float temp = baseTemperature;
-  static unsigned long lastChangeTime = 0;
-  static int alertCycle = 0;
-  
-  unsigned long currentTime = millis();
-  
-  // Every 10 readings, trigger an alert for testing
-  if (readingCounter > 0 && readingCounter % 10 == 0 && simulateAlert) {
-    alertCycle++;
-    if (alertCycle % 2 == 0) {
-      // High temperature alert
-      temp = 36.0 + random(0, 30) / 10.0; // 36.0 to 39.0°C
-      Serial.println("🔥 Simulating HIGH temperature spike!");
-    } else {
-      // Low temperature alert
-      temp = 8.0 + random(0, 20) / 10.0; // 8.0 to 10.0°C
-      Serial.println("❄️  Simulating LOW temperature drop!");
-    }
-    lastChangeTime = currentTime;
-    return temp;
-  }
-  
-  // Normal operation: gradual temperature changes
-  if (currentTime - lastChangeTime > 5000) { // Change every 5 seconds
-    // Random walk: small changes
-    float change = (random(-50, 51)) / 100.0; // -0.5 to +0.5°C
-    temp += change;
-    
-    // Keep within realistic bounds (15-32°C for normal operation)
-    if (temp < 18.0) temp = 18.0 + random(0, 20) / 10.0;
-    if (temp > 30.0) temp = 30.0 - random(0, 20) / 10.0;
-    
-    lastChangeTime = currentTime;
-  }
-  
-  // Add small random noise
-  float noise = (random(-10, 11)) / 100.0; // ±0.1°C
-  return temp + noise;
-}
-
-// Simulate different temperature patterns
-void setSimulationMode(int mode) {
-  switch(mode) {
-    case 1: // Normal room temperature
-      baseTemperature = 22.0;
-      simulateAlert = false;
-      Serial.println("Mode: Normal Room (22°C)");
-      break;
-    
-    case 2: // Server room
-      baseTemperature = 25.0;
-      simulateAlert = false;
-      Serial.println("Mode: Server Room (25°C)");
-      break;
-    
-    case 3: // Hot environment
-      baseTemperature = 32.0;
-      simulateAlert = true;
-      Serial.println("Mode: Hot Environment (32°C + alerts)");
-      break;
-    
-    case 4: // Cold environment
-      baseTemperature = 15.0;
-      simulateAlert = true;
-      Serial.println("Mode: Cold Environment (15°C + alerts)");
-      break;
-    
-    default:
-      baseTemperature = 25.0;
-      simulateAlert = false;
-  }
-  currentTemperature = baseTemperature;
-}
-
-// Check for serial commands to change simulation
-void checkSerialCommands() {
-  if (Serial.available() > 0) {
-    char cmd = Serial.read();
-    
-    switch(cmd) {
-      case '1':
-        setSimulationMode(1);
-        break;
-      case '2':
-        setSimulationMode(2);
-        break;
-      case '3':
-        setSimulationMode(3);
-        break;
-      case '4':
-        setSimulationMode(4);
-        break;
-      case 'h':
-      case 'H':
-        // Force high temperature
-        currentTemperature = 38.0;
-        Serial.println("🔥 FORCED HIGH TEMP: 38°C");
-        break;
-      case 'l':
-      case 'L':
-        // Force low temperature
-        currentTemperature = 5.0;
-        Serial.println("❄️  FORCED LOW TEMP: 5°C");
-        break;
-      case 'n':
-      case 'N':
-        // Reset to normal
-        currentTemperature = baseTemperature;
-        Serial.println("✓ Reset to normal");
-        break;
-      case '?':
-        printHelp();
-        break;
-    }
-  }
-}
-
-void printHelp() {
-  Serial.println("\n=== SIMULATION COMMANDS ===");
-  Serial.println("1 - Normal Room (22°C)");
-  Serial.println("2 - Server Room (25°C)");
-  Serial.println("3 - Hot Environment (32°C)");
-  Serial.println("4 - Cold Environment (15°C)");
-  Serial.println("H - Force HIGH temp alert (38°C)");
-  Serial.println("L - Force LOW temp alert (5°C)");
-  Serial.println("N - Reset to Normal");
-  Serial.println("? - Show this help");
-  Serial.println("===========================\n");
-}
+// ... inside setup/loop ...
+Serial.println("ERM-1 Temperature Sender Active");
 </code></pre>
                 </div>
 
-                <h3>ESP32 Device 2 (Receiver) - Key Configuration</h3>
+                <h3>ERM-2 (Receiver Unit) - Key Configuration</h3>
                 <div class="code-block">
                     <div class="code-header">
                         <span>C++ (Arduino)</span>
@@ -1177,801 +700,48 @@ void printHelp() {
                             <i class="fas fa-copy"></i> Copy
                         </button>
                     </div>
-                    <pre><code>/*
- * ESP32 Temperature Receiver (Device 2 - Receiver/Display) - SIMULATION MODE
- * Retrieves temperature data from blockchain via backend API
- * Displays on Serial Monitor (no OLED needed!)
- * 
- * Hardware Required:
- * - ESP32 Development Board only (no display needed!)
- * 
- * Features:
- * - Fetches data from blockchain
- * - Displays on Serial Monitor
- * - Built-in LED for status/alerts
- * - Buzzer optional (can be disabled)
- * 
- * Libraries Required:
- * - WiFi (built-in)
- * - HTTPClient (built-in)
- * - ArduinoJson (install via Library Manager)
- */
-
-#include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-
-// WiFi credentials
-const char* ssid = "<WIFI SSID>";
-const char* password = "<YOUR_PASSWORD>";
-
-// Backend server configuration
-const char* serverUrl = "http://192.168.1.9:3000/api/temperature/"; //YOUR_IP
-const char* senderDeviceAddress = "0x5c303cef53e62c9ea820bacfc67066362c1daed7"; // Address of Device 1
-
+                    <pre><code>
 // Device configuration
-const char* deviceId = "ESP32-TEMP-002";
-const char* devicePrivateKey = "0x1ada126eca1b7650a33834e7da8135e27df076b726c1339bef5a6743655683be";
+const char* deviceId = "ERM-2-RECEIVER";
+const char* senderDeviceAddress = "0x5c303cef53e62c9ea820bacfc67066362c1daed7"; 
 
-// Pin definitions
-#define LED_BUILTIN 2
-#define BUZZER_PIN 25  // Optional: comment out if no buzzer
-#define USE_BUZZER false  // Set to true if you have a buzzer connected
-
-// Temperature thresholds
-const float HIGH_TEMP_THRESHOLD = 35.0; // °C
-const float LOW_TEMP_THRESHOLD = 10.0;  // °C
-
-// Timing configuration
-unsigned long lastFetchTime = 0;
-const unsigned long fetchInterval = 10000; // Fetch every 10 seconds
-
-// Temperature data
-float currentTemperature = 0.0;
-String lastUpdate = "";
-String deviceIdReceived = "";
-String location = "";
-bool dataAvailable = false;
-int fetchCounter = 0;
-
-void setup() {
-  Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT);
-  
-  if (USE_BUZZER) {
-    pinMode(BUZZER_PIN, OUTPUT);
-    digitalWrite(BUZZER_PIN, LOW);
-  }
-  
-  Serial.println("\n\n====================================");
-  Serial.println("ESP32 Temperature Receiver (Display)");
-  Serial.println("====================================\n");
-  
-  Serial.println("⚠️  SERIAL MONITOR MODE - No display hardware required");
-  Serial.println("Temperature data will be shown here\n");
-  
-  // Connect to WiFi
-  connectToWiFi();
-  
-  Serial.println("\n✓ Initialization complete!");
-  Serial.println("\nDevice Configuration:");
-  Serial.print("Device ID: ");
-  Serial.println(deviceId);
-  Serial.print("Monitoring Device: ");
-  Serial.println(senderDeviceAddress);
-  Serial.println("\nStarting data retrieval...");
-  Serial.println("=====================================\n");
-  
-  // Initial LED pattern
-  for(int i = 0; i < 3; i++) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(200);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(200);
-  }
-  
-  delay(2000);
-}
-
-void loop() {
-  // Check WiFi connection
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi disconnected! Reconnecting...");
-    connectToWiFi();
-  }
-  
-  // Fetch temperature at regular intervals
-  if (millis() - lastFetchTime >= fetchInterval) {
-    fetchTemperatureFromBlockchain();
-    lastFetchTime = millis();
-  }
-  
-  // Heartbeat blink
-  static unsigned long lastBlink = 0;
-  if (millis() - lastBlink > 2000) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(50);
-    digitalWrite(LED_BUILTIN, LOW);
-    lastBlink = millis();
-  }
-  
-  delay(100);
-}
-
-void connectToWiFi() {
-  Serial.print("Connecting to WiFi: ");
-  Serial.println(ssid);
-  
-  WiFi.begin(ssid, password);
-  
-  int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-    delay(500);
-    Serial.print(".");
-    attempts++;
-  }
-  
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n✓ WiFi Connected!");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-    Serial.print("Signal Strength: ");
-    Serial.print(WiFi.RSSI());
-    Serial.println(" dBm");
-  } else {
-    Serial.println("\n✗ WiFi Connection Failed!");
-  }
-}
-
-void fetchTemperatureFromBlockchain() {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    
-    Serial.println("\n╔══════════════════════════════════════╗");
-    Serial.print("║ Fetch #");
-    Serial.print(++fetchCounter);
-    Serial.println(" - Querying Blockchain");
-    Serial.println("╚══════════════════════════════════════╝");
-    
-    // Build URL
-    String url = String(serverUrl) + String(senderDeviceAddress);
-    
-    http.begin(url);
-    http.addHeader("Content-Type", "application/json");
-    
-    int httpResponseCode = http.GET();
-    
-    if (httpResponseCode > 0) {
-      String response = http.getString();
-      
-      // Parse JSON response
-      StaticJsonDocument<512> doc;
-      DeserializationError error = deserializeJson(doc, response);
-      
-      if (!error) {
-        if (doc["success"] == true) {
-          currentTemperature = doc["data"]["temperature"];
-          lastUpdate = doc["data"]["timestamp"].as<String>();
-          deviceIdReceived = doc["data"]["deviceId"].as<String>();
-          location = doc["data"]["location"].as<String>();
-          
-          dataAvailable = true;
-          
-          // Display in a nice format
-          displayTemperatureData();
-          
-          // Check for alerts
-          checkTemperatureAlerts(currentTemperature);
-          
-        } else {
-          Serial.println("✗ No data available");
-          dataAvailable = false;
-        }
-      } else {
-        Serial.print("✗ JSON parsing failed: ");
-        Serial.println(error.c_str());
-      }
-    } else {
-      Serial.print("✗ HTTP Error code: ");
-      Serial.println(httpResponseCode);
-      dataAvailable = false;
-    }
-    
-    http.end();
-  } else {
-    Serial.println("✗ WiFi not connected!");
-  }
-}
-
-void displayTemperatureData() {
-  Serial.println("\n┌─────────────────────────────────────┐");
-  Serial.println("│     TEMPERATURE DATA RECEIVED       │");
-  Serial.println("├─────────────────────────────────────┤");
-  
-  Serial.print("│ Device ID  : ");
-  Serial.println(deviceIdReceived);
-  
-  Serial.print("│ Location   : ");
-  Serial.println(location);
-  
-  Serial.print("│ Temperature: ");
-  Serial.print(currentTemperature, 2);
-  Serial.println(" °C");
-  
-  // Visual temperature bar
-  Serial.print("│ ");
-  int bars = map((int)(currentTemperature * 10), 0, 500, 0, 30);
-  for (int i = 0; i < bars && i < 30; i++) {
-    Serial.print("█");
-  }
-  Serial.println();
-  
-  // Status indicator
-  Serial.print("│ Status     : ");
-  if (currentTemperature > HIGH_TEMP_THRESHOLD) {
-    Serial.println("🔥 HIGH TEMP ALERT!");
-  } else if (currentTemperature < LOW_TEMP_THRESHOLD) {
-    Serial.println("❄️  LOW TEMP ALERT!");
-  } else {
-    Serial.println("✓ Normal");
-  }
-  
-  Serial.print("│ Updated    : ");
-  if (lastUpdate.length() > 11) {
-    Serial.println(lastUpdate.substring(11, 19));
-  } else {
-    Serial.println(lastUpdate);
-  }
-  
-  Serial.print("│ WiFi Signal: ");
-  Serial.print(WiFi.RSSI());
-  Serial.println(" dBm");
-  
-  Serial.println("└─────────────────────────────────────┘\n");
-}
-
-void checkTemperatureAlerts(float temperature) {
-  if (temperature > HIGH_TEMP_THRESHOLD) {
-    Serial.println("⚠️  HIGH TEMPERATURE ALERT!");
-    triggerAlert("HIGH", 3);
-  } else if (temperature < LOW_TEMP_THRESHOLD) {
-    Serial.println("⚠️  LOW TEMPERATURE ALERT!");
-    triggerAlert("LOW", 2);
-  }
-}
-
-void triggerAlert(String alertType, int beeps) {
-  // Beep buzzer
-  for (int i = 0; i < beeps; i++) {
-    digitalWrite(BUZZER_PIN, HIGH);
-    delay(200);
-    digitalWrite(BUZZER_PIN, LOW);
-    delay(200);
-  }
-  
-  // Flash LED
-  for (int i = 0; i < 10; i++) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(100);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(100);
-  }
-}
-
-
-// Display historical data (if fetching history)
-void displayHistory() {
-  // Fetch last 5 readings
-  String historyUrl = "http://192.168.1.9:3000/api/readings/" + 
-                      String(senderDeviceAddress) + "?limit=5"; //YOUR_IP
-  
-  HTTPClient http;
-  http.begin(historyUrl);
-  
-  int httpResponseCode = http.GET();
-  
-  if (httpResponseCode > 0) {
-    String response = http.getString();
-    
-    DynamicJsonDocument doc(2048);
-    DeserializationError error = deserializeJson(doc, response);
-    
-    if (!error && doc["success"] == true) {
-      JsonArray data = doc["data"];
-      
-      Serial.println("\n=== Temperature History ===");
-      for (JsonObject reading : data) {
-        Serial.print("Time: ");
-        Serial.print(reading["timestamp"].as<String>());
-        Serial.print(" | Temp: ");
-        Serial.print(reading["temperature"].as<float>());
-        Serial.println(" °C");
-      }
-    }
-  }
-  
-  http.end();
-}
+// ... inside setup/loop ...
+Serial.println("ERM-2 Temperature Receiver Active");
 </code></pre>
                 </div>
 
-                <h3>Upload to ESP32</h3>
+                <h3>Upload to ERM Units</h3>
                 <ol style="margin-left: 20px; line-height: 2;">
-                    <li>Connect ESP32 via USB</li>
-                    <li>Open Arduino IDE</li>
+                    <li>Connect ERM via USB</li>
                     <li>Select: Tools → Board → ESP32 Dev Module</li>
-                    <li>Select: Tools → Port → (Your ESP32 COM port)</li>
                     <li>Click: Upload (→ button)</li>
-                    <li>Open: Serial Monitor (Ctrl+Shift+M)</li>
-                    <li>Set baud rate to: 115200</li>
+                    <li>Open: Serial Monitor to verify "ERM-1" or "ERM-2" labels</li>
                 </ol>
-
-                <div class="alert alert-success">
-                    <strong><i class="fas fa-check-circle"></i> Expected ESP32-1 Output:</strong>
-                    <pre style="background: white; padding: 10px; margin-top: 10px; color: #2d3748;">ESP32 Temperature Sender (SIMULATED)
-✓ WiFi Connected!
-IP Address: 192.168.1.105
-📊 Reading #1
-🌡️  Temperature: 25.23 °C
-✓ Temperature recorded on blockchain!</pre>
-                </div>
             </section>
 
-            <!-- API Reference -->
             <section id="api" class="section">
                 <h2>API Reference</h2>
-
                 <div class="alert alert-info">
                     <strong>Base URL:</strong> <code>http://localhost:3000</code>
                 </div>
-
-                <h3>1. Health Check</h3>
+                <h3>Sample Registration for ERM-1</h3>
                 <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>GET /health</code></pre>
-                </div>
-
-                <h4>Response:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>JSON</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>{
-  "status": "OK",
-  "message": "IoT Blockchain Server is running"
-}</code></pre>
-                </div>
-
-                <h3>2. Register Device</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
                     <pre><code>POST /api/register-device
-Content-Type: application/json
-
 {
   "deviceAddress": "0x5c303cef53e62c9ea820bacfc67066362c1daed7",
-  "deviceId": "ESP32-TEMP-001",
-  "location": "Room-101"
+  "deviceId": "ERM-1",
+  "location": "Main-Lab"
 }</code></pre>
-                </div>
-
-                <h4>Response:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>JSON</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>{
-  "success": true,
-  "transactionHash": "0x4260c8065c765a623c06c5015f13e5fc85ed36b22a6f4d78d1a04bb92f703c5e",
-  "deviceAddress": "0x5c303cef53e62c9ea820bacfc67066362c1daed7",
-  "deviceId": "ESP32-TEMP-001",
-  "location": "Room-101"
-}</code></pre>
-                </div>
-
-                <h3>3. Record Temperature</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>POST /api/temperature
-Content-Type: application/json
-
-{
-  "deviceId": "ESP32-TEMP-001",
-  "temperature": 25.5,
-  "privateKey": "0x87123236c30996f3116601ed979e7b4f526e0f7c738e6c8a1ef843602059e05d"
-}</code></pre>
-                </div>
-
-                <h4>Response:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>JSON</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>{
-  "success": true,
-  "transactionHash": "0xc366ab4a3e85302c8ac709e2b37d2837b9b36bf013315965981ea03735924d76",
-  "blockNumber": 531,
-  "deviceId": "ESP32-TEMP-001",
-  "temperature": 25.5,
-  "timestamp": "2025-10-24T12:00:16.033Z"
-}</code></pre>
-                </div>
-
-                <h3>4. Get Latest Reading</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>GET /api/temperature/:deviceAddress
-
-# Example
-curl http://localhost:3000/api/temperature/0x5c303cef53e62c9ea820bacfc67066362c1daed7</code></pre>
-                </div>
-
-                <h4>Response:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>JSON</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>{
-  "success": true,
-  "data": {
-    "timestamp": "2025-10-24T12:00:16.000Z",
-    "temperature": 25.5,
-    "deviceId": "ESP32-TEMP-001",
-    "location": "Room-101"
-  }
-}</code></pre>
-                </div>
-
-                <h3>5. Get Device Readings History</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>GET /api/readings/:deviceAddress?limit=10</code></pre>
-                </div>
-
-                <h3>6. Get All Devices</h3>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>HTTP Request</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code>GET /api/devices</code></pre>
-                </div>
-
-                <h3>Temperature Thresholds</h3>
-                <table>
-                    <tr>
-                        <th>Alert Type</th>
-                        <th>Threshold</th>
-                        <th>Description</th>
-                    </tr>
-                    <tr>
-                        <td>HIGH Alert 🔥</td>
-                        <td>&gt; 35.0°C</td>
-                        <td>Triggers high temperature warning</td>
-                    </tr>
-                    <tr>
-                        <td>NORMAL ✓</td>
-                        <td>10.0°C - 35.0°C</td>
-                        <td>Temperature within safe range</td>
-                    </tr>
-                    <tr>
-                        <td>LOW Alert ❄️</td>
-                        <td>&lt; 10.0°C</td>
-                        <td>Triggers low temperature warning</td>
-                    </tr>
-                </table>
-
-                <h3>Port Configuration</h3>
-                <table>
-                    <tr>
-                        <th>Node</th>
-                        <th>RPC (HTTP)</th>
-                        <th>WebSocket</th>
-                        <th>P2P (DevP2P)</th>
-                    </tr>
-                    <tr>
-                        <td>Node-0</td>
-                        <td>22000</td>
-                        <td>32000</td>
-                        <td>30300</td>
-                    </tr>
-                    <tr>
-                        <td>Node-1</td>
-                        <td>22001</td>
-                        <td>32001</td>
-                        <td>30301</td>
-                    </tr>
-                    <tr>
-                        <td>Node-2</td>
-                        <td>22002</td>
-                        <td>32002</td>
-                        <td>30302</td>
-                    </tr>
-                    <tr>
-                        <td>Node-3</td>
-                        <td>22003</td>
-                        <td>32003</td>
-                        <td>30303</td>
-                    </tr>
-                    <tr>
-                        <td>Node-4</td>
-                        <td>22004</td>
-                        <td>32004</td>
-                        <td>30304</td>
-                    </tr>
-                </table>
-
-                <div class="alert alert-info">
-                    <strong>Backend Server:</strong> Port 3000 (HTTP)<br>
-                    <strong>Smart Contract:</strong> 0xb5963eaf88065e44cd8f94ebd71b8bd7099c3ec3
                 </div>
             </section>
 
-            <!-- Troubleshooting -->
-            <section id="troubleshooting" class="section">
-                <h2>Troubleshooting</h2>
-
-                <h3>Issue 1: Port Already in Use</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>Fatal: Error starting protocol stack: listen tcp :30300: bind: address already in use</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Find and kill existing geth processes
-ps aux | grep geth
-pkill geth
-
-# Or kill specific port
-lsof -ti:30300 | xargs kill -9
-
-# Wait 5 seconds and restart node</code></pre>
-                </div>
-
-                <h3>Issue 2: Permission Denied</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>Fatal: Failed to create the protocol stack: open .../data/geth/LOCK: permission denied</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Fix ownership of all directories
-sudo chown -R $USER:$USER ~/QBFT-Network/</code></pre>
-                </div>
-
-                <h3>Issue 3: Nodes Not Connecting</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>Looking for peers peercount=0</code><br>
-                    <code>Dial error connection refused</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Ensure all 5 nodes are running
-ps aux | grep geth | wc -l  # Should return 5
-
-# Check static-nodes.json has correct IPs
-cat ~/QBFT-Network/QBFT-Network/Node-0/data/static-nodes.json
-
-# Verify ports are not blocked
-netstat -tuln | grep -E "30300|30301|30302|30303|30304"</code></pre>
-                </div>
-
-                <h3>Issue 4: Backend Cannot Connect to Blockchain</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>Error: connection not open</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Verify Node-0 is running and RPC is active
-curl http://localhost:22000
-
-# Check .env configuration
-cat ~/QBFT-Network/server/iot-blockchain-backend/.env | grep BLOCKCHAIN_RPC
-
-# Restart backend server
-cd ~/QBFT-Network/server/iot-blockchain-backend
-node server.js</code></pre>
-                </div>
-
-                <h3>Issue 5: ESP32 WiFi Connection Failed</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>✗ WiFi Connection Failed!</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <ol style="margin-left: 20px; line-height: 2;">
-                    <li>Verify WiFi credentials are correct</li>
-                    <li>Ensure using 2.4GHz network (ESP32 doesn't support 5GHz)</li>
-                    <li>Check WiFi signal strength</li>
-                    <li>Move ESP32 closer to router</li>
-                    <li>Verify SSID has no special characters</li>
-                </ol>
-
-                <h3>Issue 6: ESP32 HTTP Request Failed</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>✗ HTTP Error code: -1</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Verify server IP address is correct
-# Ping server from another device
-ping 192.168.1.150
-
-# Check firewall isn't blocking port 3000
-sudo ufw status
-sudo ufw allow 3000/tcp
-
-# Ensure backend server is running
-curl http://localhost:3000/health</code></pre>
-                </div>
-
-                <h3>Issue 7: Transaction Reverted</h3>
-                <div class="alert alert-danger">
-                    <strong>Symptom:</strong><br>
-                    <code>{"error":"Transaction has been reverted by the EVM"}</code>
-                </div>
-
-                <h4>Solution:</h4>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Bash</span>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <pre><code># Check device is registered
-curl http://localhost:3000/api/devices
-
-# Verify contract address in .env
-cat ~/QBFT-Network/server/iot-blockchain-backend/.env | grep CONTRACT_ADDRESS</code></pre>
-                </div>
-
-                <h3>Performance Metrics</h3>
-                <table>
-                    <tr>
-                        <th>Metric</th>
-                        <th>Value</th>
-                        <th>Notes</th>
-                    </tr>
-                    <tr>
-                        <td>Block Time</td>
-                        <td>5 seconds</td>
-                        <td>Configurable in genesis</td>
-                    </tr>
-                    <tr>
-                        <td>Transaction Finality</td>
-                        <td>Immediate</td>
-                        <td>QBFT provides instant finality</td>
-                    </tr>
-                    <tr>
-                        <td>Data Send Interval</td>
-                        <td>15 seconds</td>
-                        <td>ESP32-1 sends temperature</td>
-                    </tr>
-                    <tr>
-                        <td>Data Fetch Interval</td>
-                        <td>10 seconds</td>
-                        <td>ESP32-2 retrieves data</td>
-                    </tr>
-                    <tr>
-                        <td>Network Latency</td>
-                        <td>&lt; 100ms</td>
-                        <td>Local network</td>
-                    </tr>
-                    <tr>
-                        <td>Consensus Threshold</td>
-                        <td>3 of 5 nodes</td>
-                        <td>Byzantine fault tolerance</td>
-                    </tr>
-                    <tr>
-                        <td>Maximum Downtime</td>
-                        <td>2 nodes</td>
-                        <td>Network continues with 3+ nodes</td>
-                    </tr>
-                </table>
-
-                <div class="alert alert-warning">
-                    <strong><i class="fas fa-shield-alt"></i> Security Note:</strong><br>
-                    This configuration is for development and testing. For production deployment, implement proper key management, HTTPS, authentication, and firewall rules.
-                </div>
-            </section>
-
-            <!-- Footer -->
             <div style="text-align: center; padding: 40px 0; border-top: 2px solid #e2e8f0; margin-top: 50px;">
                 <p style="color: #718096; font-size: 0.9em;">
-                    <i class="fas fa-code"></i> IoT Temperature Monitoring System with QBFT Blockchain<br>
-                    Built with ❤️ using ESP32, Node.js, and GoQuorum
-                </p>
-                <p style="margin-top: 10px;">
-                    <a href="https://github.com/Arasulingam/QBFT-Quorum" style="color: #667eea; text-decoration: none;">
-                        <i class="fab fa-github"></i> GitHub Repository
-                    </a>
+                    <i class="fas fa-code"></i> IoT Monitoring System (ERM-1 & ERM-2 Units)<br>
+                    Built with ❤️ using Node.js and GoQuorum
                 </p>
             </div>
         </main>
-    </div>
-
-    <!-- Back to Top Button -->
-    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up"></i>
     </div>
 
     <script>
@@ -1979,21 +749,14 @@ cat ~/QBFT-Network/server/iot-blockchain-backend/.env | grep CONTRACT_ADDRESS</c
         function copyCode(button) {
             const codeBlock = button.closest('.code-block');
             const code = codeBlock.querySelector('pre code').textContent;
-            
             navigator.clipboard.writeText(code).then(() => {
-                const icon = button.querySelector('i');
                 const originalHTML = button.innerHTML;
-                
                 button.innerHTML = '<i class="fas fa-check"></i> Copied!';
                 button.classList.add('copied');
-                
                 setTimeout(() => {
                     button.innerHTML = originalHTML;
                     button.classList.remove('copied');
                 }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                alert('Failed to copy code. Please try again.');
             });
         }
 
@@ -2001,59 +764,12 @@ cat ~/QBFT-Network/server/iot-blockchain-backend/.env | grep CONTRACT_ADDRESS</c
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                
-                // Remove active class from all links
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                
-                // Add active class to clicked link
                 this.classList.add('active');
-                
-                // Scroll to section
                 const targetId = this.getAttribute('href');
                 const targetSection = document.querySelector(targetId);
-                
                 if (targetSection) {
                     targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Back to top button visibility
-        const backToTopBtn = document.getElementById('backToTop');
-        const mainContent = document.querySelector('.main-content');
-
-        mainContent.addEventListener('scroll', () => {
-            if (mainContent.scrollTop > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-        });
-
-        function scrollToTop() {
-            mainContent.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Highlight active section on scroll
-        const sections = document.querySelectorAll('.section');
-        const navLinks = document.querySelectorAll('.nav-link');
-
-        mainContent.addEventListener('scroll', () => {
-            let current = '';
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                
-                if (mainContent.scrollTop >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
                 }
             });
         });
